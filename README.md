@@ -1,13 +1,19 @@
 # Mathieu Konstruct Solutions Website
 
-Official website for Mathieu Konstruct Solutions Co. Ltd., showcasing prefab modular units, construction, engineering, design solutions, product catalog, and company information.
+GitHub Pages fixed build for the project URL:
 
-## GitHub Pages
+https://mathieu1-tech.github.io/mathieu/
 
-Upload all files in this repository to `mathieu1-tech.github.io`.
+## Upload instructions
 
-Main website file: `index.html`
+Upload the contents of this folder directly to the root of the `mathieu` repository. Do not upload the folder itself.
 
-Free website URL:
+Required root files/folders:
 
-https://mathieu1-tech.github.io/
+- index.html
+- admin.html
+- assets/
+- .nojekyll
+- README.md
+
+The CSS and JavaScript are embedded inside `index.html` so the site will not appear as plain HTML if external CSS/JS paths fail. Images and PDF catalog remain inside `assets/` using relative paths.

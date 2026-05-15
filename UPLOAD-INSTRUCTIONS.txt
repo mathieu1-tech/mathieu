@@ -1,0 +1,16 @@
+UPLOAD THESE FILES TO GITHUB ROOT
+
+1. Extract this ZIP.
+2. Open your GitHub repo: mathieu
+3. Click Add file > Upload files.
+4. Upload the CONTENTS of this extracted folder, not the folder itself.
+5. Make sure GitHub root shows:
+   - index.html
+   - admin.html
+   - assets/
+   - .nojekyll
+   - README.md
+6. Commit changes.
+7. Open: https://mathieu1-tech.github.io/mathieu/
+
+If the website still looks plain, hard refresh with Ctrl + F5 or clear browser cache.
