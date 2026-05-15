@@ -1,30 +1,13 @@
-# Mathieu Prefab Website with Admin Control Panel
+# Mathieu Konstruct Solutions Website
 
-This package contains the Mathieu Konstruct Solutions website plus a static admin panel.
+Official website for Mathieu Konstruct Solutions Co. Ltd., showcasing prefab modular units, construction, engineering, design solutions, product catalog, and company information.
 
-## Included
-- `index.html` — public website
-- `admin.html` — admin login and content editor
-- `assets/js/site-data.js` — default site content and localStorage helpers
-- `assets/js/main.js` — website rendering and interactions
-- `assets/js/admin.js` — admin logic
-- `assets/css/style.css` — website styling
-- `assets/css/admin.css` — admin styling
-- `assets/images/logo.png` — uploaded PNG logo
+## GitHub Pages
 
-## Demo Admin Login
-- Username: `admin`
-- Password: `mks2026`
+Upload all files in this repository to `mathieu1-tech.github.io`.
 
-## How it works
-The admin panel stores content in `localStorage`, so it works on GitHub Pages without a backend.
+Main website file: `index.html`
 
-## Publish on GitHub Pages
-1. Upload the full folder contents to a GitHub repository.
-2. Go to **Settings > Pages**.
-3. Set the source branch to `main` and root to `/`.
-4. Save and wait for deployment.
+Free website URL:
 
-## Notes
-- This is a static demo admin panel and not real secure server-side authentication.
-- Export/import JSON backups are available from `admin.html`.
+https://mathieu1-tech.github.io/
