@@ -1,23 +1,30 @@
-# Mathieu Konstruct Solutions Website
+# Mathieu Prefab Website with Admin Control Panel
 
-GitHub Pages-ready fixed build for:
+This package contains the Mathieu Konstruct Solutions website plus a static admin panel.
 
-`https://mathieu1-tech.github.io/mathieu/`
+## Included
+- `index.html` — public website
+- `admin.html` — admin login and content editor
+- `assets/js/site-data.js` — default site content and localStorage helpers
+- `assets/js/main.js` — website rendering and interactions
+- `assets/js/admin.js` — admin logic
+- `assets/css/style.css` — website styling
+- `assets/css/admin.css` — admin styling
+- `assets/images/logo.png` — uploaded PNG logo
 
-## Deployment
+## Demo Admin Login
+- Username: `admin`
+- Password: `mks2026`
 
-1. Extract this ZIP.
-2. Upload all extracted files and folders to the root of the `mathieu` repository.
-3. Make sure GitHub Pages is set to deploy from the main branch root.
-4. Visit `https://mathieu1-tech.github.io/mathieu/`.
-5. Hard refresh with `Ctrl + F5`.
+## How it works
+The admin panel stores content in `localStorage`, so it works on GitHub Pages without a backend.
 
-## Fixes included
+## Publish on GitHub Pages
+1. Upload the full folder contents to a GitHub repository.
+2. Go to **Settings > Pages**.
+3. Set the source branch to `main` and root to `/`.
+4. Save and wait for deployment.
 
-- CSS embedded in `index.html` to prevent plain HTML display.
-- JavaScript embedded in `index.html` for working interactions.
-- GitHub Pages-safe `./assets/...` paths.
-- Fixed image paths for `/mathieu/` project deployment.
-- PDF catalog download path fixed.
-- Product/unit images preserved with `object-fit: contain`.
-- `.nojekyll` included.
+## Notes
+- This is a static demo admin panel and not real secure server-side authentication.
+- Export/import JSON backups are available from `admin.html`.
