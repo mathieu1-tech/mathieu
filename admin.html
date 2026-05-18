@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Mathieu Konstruct Solutions</title>
+  <link rel="icon" type="image/png" href="./assets/images/logo.png" />
+  <style>
+:root {
+  --bg: #071f1c;
+  --bg-soft: #0f312d;
+  --panel: #ffffff;
+  --line: rgba(7, 61, 57, 0.12);
+  --text: #132321;
+  --muted: #60716d;
+  --accent: #0b5a53;
+  --accent-2: #0f786e;
+  --danger: #ab2b2b;
+  --radius: 20px;
+  --shadow: 0 20px 45px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:#edf2f0;color:var(--text)}
+.hidden{display:none!important}.muted{color:var(--muted)}
+.eyebrow{margin:0 0 8px;color:#7fc7bf;text-transform:uppercase;letter-spacing:.18em;font-size:.78rem;font-weight:800}
+.btn{border:0;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:#0b5a53;color:#fff}.btn.primary:hover{background:#0f786e}
+.btn.ghost{background:#ecf3f1;color:#0b5a53}.btn.ghost:hover{background:#dbe9e5}
+.btn.danger{background:#ffe8e8;color:#9c1f1f}.btn.danger:hover{background:#ffd4d4}
+.btn.small{padding:8px 12px;font-size:.85rem}.file-btn{position:relative;overflow:hidden}
+.admin-login-shell{min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top left,#0b5a53,#071f1c 60%)}
+.login-card{width:min(480px,calc(100% - 32px));background:rgba(255,255,255,.97);padding:34px;border-radius:28px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.login-card h1{margin:0 0 8px;font-size:2rem}.login-logo{width:72px;height:72px;border-radius:18px;object-fit:contain;margin-bottom:16px}
+.login-card label{display:block;margin-top:16px;font-weight:700}.login-card input{width:100%;margin-top:8px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);font:inherit}
+.login-card .btn{width:100%;margin-top:20px}.error-message{min-height:20px;color:#b3261e}.hint{font-size:.92rem;color:var(--muted)}
+.admin-app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+.sidebar{background:var(--bg);color:#fff;padding:22px 18px;position:sticky;top:0;height:100vh;overflow:auto}
+.sidebar-brand{display:flex;align-items:center;gap:12px;padding:10px 8px 22px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:18px}
+.sidebar-brand img{width:54px;height:54px;border-radius:14px;object-fit:contain;background:#fff;padding:4px}.sidebar-brand strong{display:block}.sidebar-brand small{color:#b4c8c5}
+.sidebar-nav{display:grid;gap:8px}.sidebar-nav button{padding:12px 14px;border-radius:14px;border:0;background:transparent;color:#dfe9e7;text-align:left;font-weight:700;cursor:pointer}
+.sidebar-nav button.active,.sidebar-nav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.admin-main{padding:24px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}.topbar h1{margin:0;font-size:2rem}.topbar-actions{display:flex;gap:12px;flex-wrap:wrap}
+.panel-section{display:none}.panel-section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}.stat-card{background:#fff;border-radius:20px;padding:20px;box-shadow:var(--shadow)}.stat-card span{display:block;color:var(--muted);margin-bottom:8px}.stat-card strong{font-size:1.6rem}.stat-wide{grid-column:span 2}
+.notice-card,.editor-card{background:#fff;border-radius:22px;padding:24px;box-shadow:var(--shadow);border:1px solid var(--line);margin-top:18px}.editor-card h3,.notice-card h3{margin-top:0}
+.form-grid{display:grid;gap:16px}.form-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid label{display:block;font-weight:700}.form-grid input,.form-grid textarea,.form-grid select{width:100%;margin-top:8px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);font:inherit;background:#fbfdfc}.form-grid textarea{min-height:120px;resize:vertical}
+.array-editor-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.array-editor-list{display:grid;gap:16px}.array-item{background:#f8fbfa;border:1px solid var(--line);border-radius:18px;padding:18px}.array-item-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.array-actions{display:flex;gap:8px;flex-wrap:wrap}
+.backup-actions{display:flex;gap:12px;flex-wrap:wrap}
+@media (max-width:1100px){.admin-app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stat-wide{grid-column:auto}}
+@media (max-width:700px){.admin-main{padding:18px}.topbar{flex-direction:column;align-items:flex-start}.form-grid.two,.stats-grid{grid-template-columns:1fr}.array-item-head{flex-direction:column;align-items:flex-start}}
+
+
+/* Theme panel form support */
+#panel-theme select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(6,61,57,.16);
+  font: inherit;
+  background: #fff;
+}
+
+
+/* Dark-theme readability support for admin panel */
+body.dark-theme{background:#031f1c;color:#f3fbf9}
+body.dark-theme .admin-main{background:#031f1c}
+body.dark-theme .notice-card,body.dark-theme .editor-card,body.dark-theme .stat-card,body.dark-theme .array-item,body.dark-theme .login-card{background:#0a3530;color:#f3fbf9;border-color:rgba(127,199,191,.18)}
+body.dark-theme .muted,body.dark-theme .hint{color:#b9cfcb}
+body.dark-theme input,body.dark-theme textarea,body.dark-theme select{background:#0d403a!important;color:#f3fbf9!important;border-color:rgba(127,199,191,.18)!important}
+</style>
+</head>
+<body>
+  <section class="admin-login-shell" id="loginView">
+    <form class="login-card" id="loginForm">
+      <img class="login-logo" src="./assets/images/logo.png" alt="Mathieu Konstruct Solutions logo" />
+      <h1>Website Admin</h1>
+      <p class="hint">Demo editor for GitHub Pages/localStorage content updates.</p>
+      <label>Username<input id="loginUsername" type="text" autocomplete="username" required /></label>
+      <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
+      <button class="btn primary" type="submit">Login</button>
+      <p class="error-message" id="loginError"></p>
+      <p class="hint">Default: admin / mks2026</p>
+    </form>
+  </section>
+  <section class="admin-app hidden" id="adminApp">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><img src="./assets/images/logo.png" alt="Logo" /><div><strong>Mathieu Konstruct</strong><small>Website Editor</small></div></div>
+      <nav class="sidebar-nav" id="sidebarNav"><button type="button" data-section="dashboard" class="active">Dashboard</button>
+<button type="button" data-section="brand" class="">Brand</button>
+<button type="button" data-section="hero" class="">Hero</button>
+<button type="button" data-section="about" class="">About</button>
+<button type="button" data-section="vision" class="">Vision & Mission</button>
+<button type="button" data-section="services" class="">Services</button>
+<button type="button" data-section="products" class="">Products</button>
+<button type="button" data-section="specifications" class="">Specifications</button>
+<button type="button" data-section="materials" class="">Materials</button>
+<button type="button" data-section="gallery" class="">Gallery</button>
+<button type="button" data-section="contact" class="">Contact</button>
+<button type="button" data-section="seo" class="">Seo</button>
+<button type="button" data-section="theme" class="">Theme</button>
+<button type="button" data-section="backup" class="">Backup</button></nav>
+    </aside>
+    <main class="admin-main">
+      <div class="topbar"><h1 id="adminPageTitle">Dashboard</h1><div class="topbar-actions"><button class="btn ghost" id="previewBtn" type="button">Preview Website</button><button class="btn primary" id="saveAllBtn" type="button">Save Changes</button><button class="btn danger" id="logoutBtn" type="button">Logout</button></div></div>
+      <section class="panel-section active" id="panel-dashboard"></section>
+<section class="panel-section" id="panel-brand"></section>
+<section class="panel-section" id="panel-hero"></section>
+<section class="panel-section" id="panel-about"></section>
+<section class="panel-section" id="panel-vision"></section>
+<section class="panel-section" id="panel-services"></section>
+<section class="panel-section" id="panel-products"></section>
+<section class="panel-section" id="panel-specifications"></section>
+<section class="panel-section" id="panel-materials"></section>
+<section class="panel-section" id="panel-gallery"></section>
+<section class="panel-section" id="panel-contact"></section>
+<section class="panel-section" id="panel-seo"></section>
+<section class="panel-section" id="panel-theme"></section>
+<section class="panel-section" id="panel-backup"></section>
+    </main>
+  </section>
+  <script>
+window.defaultSiteData = {
+  "brand": {
+    "companyName": "Mathieu Konstruct Solutions Co. Ltd.",
+    "shortName": "Mathieu Konstruct Solutions",
+    "tagline": "Design | Engineers | Construction | Pre-Fab",
+    "logo": "./assets/images/logo.png"
+  },
+  "hero": {
+    "eyebrow": "Design • Engineers • Construction • Pre-Fab",
+    "headline": "Innovative Prefab Solutions for a Smarter Future",
+    "supportingText": "Prefabricated modular units designed for speed, quality, durability, and modern construction needs.",
+    "ctaPrimary": "View Products",
+    "ctaSecondary": "Contact Us",
+    "heroImage": "./assets/images/hero-prefab-unit.png",
+    "stats": [
+      {
+        "value": "50%",
+        "label": "Time Savings"
+      },
+      {
+        "value": "1 Day",
+        "label": "Assembly"
+      },
+      {
+        "value": "18 sqm",
+        "label": "Prefab Unit"
+      }
+    ]
+  },
+  "about": {
+    "eyebrow": "About Us",
+    "heading": "Mathieu Konstruct Solutions Co. Ltd.",
+    "body": "Since 2019, Mathieu Konstruct Solutions Co. Ltd. has built a strong foundation as a General Contractor. Today, the company leads in prefabricated unit solutions, combining speed, quality, and innovation to meet modern construction demands.",
+    "whatWeDoTitle": "What We Do",
+    "whatWeDoBody": "We deliver ready-to-install prefabricated structures that save time, reduce costs, and maintain high-quality standards — perfect for modern construction needs.",
+    "image": "./assets/images/about-prefab-unit.png"
+  },
+  "visionMission": {
+    "visionTitle": "Vision",
+    "visionText": "To be recognized as a competent and reliable contractor in both conventional and prefabricated construction sectors. Transforming spaces through intelligent modular engineering.",
+    "missionTitle": "Mission",
+    "missionText": "To provide compliant, efficient, and high-quality construction services using modern building technologies. To define the future of sustainable living through modular design solutions."
+  },
+  "servicesIntro": {
+    "eyebrow": "Our Services",
+    "heading": "From design to customized build",
+    "body": "Professional engineering, construction, and prefabricated modular solutions for modern projects.",
+    "blueprintImage": "./assets/images/services-blueprint.png"
+  },
+  "services": [
+    {
+      "name": "General Construction Works",
+      "description": "Reliable project execution for conventional and modern construction needs.",
+      "icon": "🏗️"
+    },
+    {
+      "name": "Prefabricated Modular Units",
+      "description": "Ready-to-install modular units built for speed, flexibility, and durability.",
+      "icon": "▰"
+    },
+    {
+      "name": "Structural & Architectural Works",
+      "description": "Engineering-focused design coordination and structural development.",
+      "icon": "📐"
+    },
+    {
+      "name": "Design",
+      "description": "Clean, functional, and project-ready design planning for prefab solutions.",
+      "icon": "✦"
+    },
+    {
+      "name": "Customized Build",
+      "description": "Flexible builds tailored to site requirements, layout, usage, and finish.",
+      "icon": "🧩"
+    }
+  ],
+  "prefab": {
+    "eyebrow": "What is Prefab?",
+    "heading": "Highly flexible design and built to last.",
+    "image": "./assets/images/what-is-prefab.png",
+    "features": [
+      "Highly flexible design",
+      "Easy to move or take apart",
+      "Fully equipped and move-in ready",
+      "Cost effective",
+      "Better insulation",
+      "1 day assembly",
+      "Over 50% reduction in on-site assembly and installation time"
+    ]
+  },
+  "productsIntro": {
+    "eyebrow": "Our Product",
+    "heading": "Prefab product showcase",
+    "body": "Container houses, quick-build units, vacation homes, and multifunctional prefab spaces."
+  },
+  "products": [
+    {
+      "title": "Engineering Container House",
+      "description": "Meeting the mass production and construction needs of medium to large-scale engineering projects.",
+      "image": "./assets/images/engineering-container-house.png"
+    },
+    {
+      "title": "Customized Container House",
+      "description": "Realize any of your custom ideas, freely combine and match.",
+      "image": "./assets/images/customized-container-house.png"
+    },
+    {
+      "title": "1-Day Quick Build Houses",
+      "description": "You can own a house in as little as one day.",
+      "image": "./assets/images/quick-build-house.png"
+    },
+    {
+      "title": "A-Frame House",
+      "description": "Excellent drainage and an attractive vacation home.",
+      "image": "./assets/images/a-frame-house.png"
+    },
+    {
+      "title": "Space Capsule House",
+      "description": "Living, working, and leisure, the multifunctional space capsule house meets all your needs.",
+      "image": "./assets/images/space-capsule-house.png"
+    }
+  ],
+  "specificationsIntro": {
+    "eyebrow": "About The Product",
+    "heading": "Technical specifications",
+    "image": "./assets/images/product-specification.png"
+  },
+  "specifications": [
+    {
+      "title": "External Size",
+      "content": "L5950 x W3000 x H2850mm\n18 sqm / 200 sqft"
+    },
+    {
+      "title": "Internal Size",
+      "content": "L5730 x W2780 x H2500mm"
+    },
+    {
+      "title": "Columns and Beams",
+      "content": "2.3 mm thick, galvanized steel, powder coated, rust proof"
+    },
+    {
+      "title": "Wallboard",
+      "content": "EPS board material, moisture free, insulated, termite free, 50 mm thick"
+    },
+    {
+      "title": "Door",
+      "content": "18 mm thick fireproof steel door, 920mm x 2035mm"
+    },
+    {
+      "title": "Windows",
+      "content": "Tempered glass window with grills, 950 x 1100 mm"
+    },
+    {
+      "title": "Floor",
+      "content": "Fiber cement floor, moisture resistant"
+    },
+    {
+      "title": "Roof",
+      "content": "Galvanized color roof, rust proof, 0.56 mm thick, glass wool insulated"
+    }
+  ],
+  "materialsIntro": {
+    "eyebrow": "Material Properties",
+    "heading": "Built to last",
+    "body": "Waterproof, moisture proof, eco-friendly, safe, durable, scratch resistant, and easy to clean."
+  },
+  "materials": [
+    {
+      "name": "Top Long Beam",
+      "image": "./assets/images/material-top-long-beam.png",
+      "properties": "Waterproof, durable, moisture proof"
+    },
+    {
+      "name": "Column",
+      "image": "./assets/images/material-column.png",
+      "properties": "Strong structural support, rust resistant"
+    },
+    {
+      "name": "Rockwool Wallboard",
+      "image": "./assets/images/material-rockwool-wallboard.png",
+      "properties": "Insulation, fire resistance, sound absorption"
+    },
+    {
+      "name": "Roof Tile",
+      "image": "./assets/images/material-roof-tile.png",
+      "properties": "Weather resistant, easy to maintain"
+    },
+    {
+      "name": "Glass Wool",
+      "image": "./assets/images/material-glass-wool.png",
+      "properties": "Thermal and acoustic insulation"
+    },
+    {
+      "name": "Inner Ceiling",
+      "image": "./assets/images/material-inner-ceiling.png",
+      "properties": "Clean finish, easy to clean"
+    }
+  ],
+  "galleryIntro": {
+    "featureEyebrow": "Product Display",
+    "featureHeading": "Feature details gallery",
+    "featureBody": "Interior views, door and window details, watertight joints, seamless joints, and frame details.",
+    "sampleEyebrow": "Bare Unit Prefab",
+    "sampleHeading": "Sample lay-out showcase",
+    "applicationsEyebrow": "Applications",
+    "applicationsHeading": "Spaces That Fit Anywhere",
+    "applicationsBody": "And many more."
+  },
+  "gallery": [
+    {
+      "title": "Interior View",
+      "image": "./assets/images/feature-interior.png",
+      "alt": "Interior prefab unit view",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Window with Grills",
+      "image": "./assets/images/feature-window.png",
+      "alt": "Window with grills detail",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Ceiling Panel",
+      "image": "./assets/images/feature-ceiling.png",
+      "alt": "Ceiling panel detail",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Wall Corner",
+      "image": "./assets/images/feature-wall-corner.png",
+      "alt": "Wall corner detail",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Watertight Joint",
+      "image": "./assets/images/feature-watertight-joint.png",
+      "alt": "Watertight joint detail",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Patent-Right Joint",
+      "image": "./assets/images/feature-patent-joint.png",
+      "alt": "Patent-right joint detail",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Seamless Joint",
+      "image": "./assets/images/feature-seamless-joint.png",
+      "alt": "Seamless joint detail",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Container Exterior",
+      "image": "./assets/images/feature-container-exterior.png",
+      "alt": "Container exterior unit image",
+      "category": "Feature Details"
+    },
+    {
+      "title": "Bare Unit Front View",
+      "image": "./assets/images/bare-unit-prefab.png",
+      "alt": "Bare unit prefab front view",
+      "category": "Sample Layout"
+    },
+    {
+      "title": "Bare Unit Side View",
+      "image": "./assets/images/bare-unit-side.png",
+      "alt": "Bare unit prefab side view",
+      "category": "Sample Layout"
+    },
+    {
+      "title": "Sample Layout 1",
+      "image": "./assets/images/sample-layout-1.png",
+      "alt": "Sample layout view 1",
+      "category": "Sample Layout"
+    },
+    {
+      "title": "Sample Layout 2",
+      "image": "./assets/images/sample-layout-2.png",
+      "alt": "Sample layout view 2",
+      "category": "Sample Layout"
+    },
+    {
+      "title": "Sample Layout 3",
+      "image": "./assets/images/sample-layout-3.png",
+      "alt": "Sample layout view 3",
+      "category": "Sample Layout"
+    },
+    {
+      "title": "Sample Layout 4",
+      "image": "./assets/images/sample-layout-4.png",
+      "alt": "Sample layout view 4",
+      "category": "Sample Layout"
+    },
+    {
+      "title": "Temporary Housing",
+      "image": "./assets/images/app-temporary-housing.jpeg",
+      "alt": "Temporary housing prefab application",
+      "category": "Applications"
+    },
+    {
+      "title": "Vacation Home / Airbnb",
+      "image": "./assets/images/app-vacation-airbnb.png",
+      "alt": "Vacation home and Airbnb prefab application",
+      "category": "Applications"
+    },
+    {
+      "title": "Resorts",
+      "image": "./assets/images/app-resorts.png",
+      "alt": "Resort prefab application",
+      "category": "Applications"
+    },
+    {
+      "title": "Site Offices / Staff Housing",
+      "image": "./assets/images/app-site-office.png",
+      "alt": "Site office and staff housing prefab application",
+      "category": "Applications"
+    },
+    {
+      "title": "Commercial Shops / Kiosk",
+      "image": "./assets/images/app-commercial-kiosk.png",
+      "alt": "Commercial shop and kiosk prefab application",
+      "category": "Applications"
+    },
+    {
+      "title": "Glamping / Camp Site",
+      "image": "./assets/images/app-glamping.png",
+      "alt": "Glamping and camp site prefab application",
+      "category": "Applications"
+    }
+  ],
+  "customize": {
+    "eyebrow": "Customize Options",
+    "heading": "Customize a variety of options according to your needs",
+    "containerImage": "./assets/images/container-sizes.png",
+    "sprayImage": "./assets/images/spray-colors.png",
+    "additionalOptions": "Toilet & Bath, Basic Electrical, Interior Partitions."
+  },
+  "advantages": {
+    "eyebrow": "Construction Advantage",
+    "heading": "Prefabricated construction advantage",
+    "items": [
+      "Strong structure and earthquake resistance",
+      "Fire & heat insulation",
+      "Easy assembly",
+      "Cost and economic advantages"
+    ],
+    "scheduleHeading": "Typical prefabricated construction schedule",
+    "schedule": [
+      "Design & Engineering",
+      "Building Material Acquisition",
+      "Site Development",
+      "Building Assembly & Site Restoration",
+      "Up to 50% Time Savings"
+    ]
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Let's Grow Together",
+    "email": "mathieukonstructsolutions@gmail.com",
+    "phone1": "(+63) 917 186 8611",
+    "phone2": "(+63) 968 124 0317",
+    "office": "412B Bldg 8 Field Residences, Dr. A. Santos, San Dionisio, Paranaque City",
+    "warehouse": "Blk10 L36, Mahogany, Tambubong, San Rafael, Bulacan",
+    "formRecipient": "mathieukonstructsolutions@gmail.com"
+  },
+  "seo": {
+    "pageTitle": "Mathieu Konstruct Solutions Co. Ltd. | Prefabricated Modular Units",
+    "metaDescription": "Mathieu Konstruct Solutions Co. Ltd. provides prefabricated modular units, container houses, construction, engineering, and customized prefab solutions for modern building needs.",
+    "metaKeywords": "Mathieu Konstruct Solutions, prefab, prefabricated units, modular units, container house, construction, engineering, Paranaque, Bulacan",
+    "ogTitle": "Mathieu Konstruct Solutions Co. Ltd. | Prefabricated Modular Units",
+    "ogDescription": "Innovative prefab solutions for a smarter future.",
+    "ogImage": "./assets/images/logo.png"
+  }
+};
+window.storageKeys = { data: 'mksSiteData', savedAt: 'mksSiteDataSavedAt' };
+window.cloneSiteData = function cloneSiteData(data) {
+  return JSON.parse(JSON.stringify(data));
+};
+window.getSiteData = function getSiteData() {
+  try {
+    const raw = localStorage.getItem(window.storageKeys.data);
+    if (!raw) return window.cloneSiteData(window.defaultSiteData);
+    const parsed = JSON.parse(raw);
+    return Object.assign(window.cloneSiteData(window.defaultSiteData), parsed);
+  } catch (err) {
+    console.error('Failed to load site data', err);
+    return window.cloneSiteData(window.defaultSiteData);
+  }
+};
+window.saveSiteData = function saveSiteData(data) {
+  const clean = window.cloneSiteData(data);
+  localStorage.setItem(window.storageKeys.data, JSON.stringify(clean));
+  localStorage.setItem(window.storageKeys.savedAt, new Date().toISOString());
+};
+window.getSiteSavedAt = function getSiteSavedAt() {
+  return localStorage.getItem(window.storageKeys.savedAt) || '';
+};
+</script>
+  <script>
+// Static demo login only. For real production admin security,
+// use a backend authentication system and database.
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'mks2026';
+const LOGIN_KEY = 'mksAdminLoggedIn';
+let siteData = window.getSiteData();
+
+function q(selector) { return document.querySelector(selector); }
+function qa(selector) { return Array.from(document.querySelectorAll(selector)); }
+function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+function savedAtText() {
+  const savedAt = window.getSiteSavedAt();
+  return savedAt ? new Date(savedAt).toLocaleString() : 'Not saved yet';
+}
+function loginState(isLoggedIn) {
+  q('#loginView').classList.toggle('hidden', isLoggedIn);
+  q('#adminApp').classList.toggle('hidden', !isLoggedIn);
+}
+function showSection(key) {
+  qa('.sidebar-nav button').forEach(btn => btn.classList.toggle('active', btn.dataset.section === key));
+  qa('.panel-section').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${key}`));
+  q('#adminPageTitle').textContent = key === 'vision' ? 'Vision & Mission' : key.charAt(0).toUpperCase() + key.slice(1);
+}
+function saveAll() {
+  window.saveSiteData(siteData);
+  renderAll();
+  alert('Changes saved successfully. Preview the homepage to see updates.');
+}
+function field(label, id, value, type='text', placeholder='') {
+  if (type === 'textarea') return `<label>${label}<textarea id="${id}" placeholder="${esc(placeholder)}">${esc(value)}</textarea></label>`;
+  return `<label>${label}<input type="${type}" id="${id}" value="${esc(value)}" placeholder="${esc(placeholder)}"></label>`;
+}
+function card(title, inner) { return `<div class="editor-card"><h3>${title}</h3>${inner}</div>`; }
+
+function bindSimpleFields(mappings) {
+  mappings.forEach(([selector, path]) => {
+    const node = q(selector);
+    if (!node) return;
+    node.addEventListener('input', () => {
+      let ref = siteData;
+      for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+      ref[path[path.length - 1]] = node.value;
+      renderDashboardOnly();
+    });
+  });
+}
+
+function renderDashboardOnly() {
+  const galleryItems = siteData.gallery || [];
+  q('#panel-dashboard').innerHTML = `
+    <div class="stats-grid">
+      <article class="stat-card"><span>Total Products</span><strong>${(siteData.products || []).length}</strong></article>
+      <article class="stat-card"><span>Total Services</span><strong>${(siteData.services || []).length}</strong></article>
+      <article class="stat-card"><span>Total Gallery Images</span><strong>${galleryItems.length}</strong></article>
+      <article class="stat-card"><span>Contact Info Status</span><strong>${siteData.contact?.email ? 'Complete' : 'Needs Review'}</strong></article>
+      <article class="stat-card stat-wide"><span>Last Saved Time</span><strong>${savedAtText()}</strong></article>
+    </div>
+    <div class="notice-card">
+      <h3>How it works</h3>
+      <p>All edits are stored in your browser using localStorage. This is GitHub Pages friendly and requires no backend.</p>
+      <p>Use <strong>Save Changes</strong> after editing content. Use <strong>Preview Website</strong> to open the homepage.</p>
+    </div>`;
+}
+
+function renderBrandSection() {
+  q('#panel-brand').innerHTML = card('Brand Settings', `
+    <div class="form-grid two">
+      ${field('Company Name', 'brand-companyName', siteData.brand.companyName)}
+      ${field('Short Name', 'brand-shortName', siteData.brand.shortName)}
+      ${field('Tagline', 'brand-tagline', siteData.brand.tagline)}
+      ${field('Logo Path', 'brand-logo', siteData.brand.logo)}
+    </div>`);
+  bindSimpleFields([
+    ['#brand-companyName', ['brand', 'companyName']],
+    ['#brand-shortName', ['brand', 'shortName']],
+    ['#brand-tagline', ['brand', 'tagline']],
+    ['#brand-logo', ['brand', 'logo']]
+  ]);
+}
+
+function renderHeroSection() {
+  q('#panel-hero').innerHTML = card('Hero Section', `
+    <div class="form-grid two">
+      ${field('Eyebrow', 'hero-eyebrow', siteData.hero.eyebrow)}
+      ${field('Headline', 'hero-headline', siteData.hero.headline)}
+      ${field('Supporting Text', 'hero-supportingText', siteData.hero.supportingText, 'textarea')}
+      ${field('Hero Image Path', 'hero-image', siteData.hero.heroImage)}
+      ${field('Primary CTA Label', 'hero-cta1', siteData.hero.ctaPrimary)}
+      ${field('Secondary CTA Label', 'hero-cta2', siteData.hero.ctaSecondary)}
+    </div>`);
+  bindSimpleFields([
+    ['#hero-eyebrow', ['hero', 'eyebrow']], ['#hero-headline', ['hero', 'headline']], ['#hero-supportingText', ['hero', 'supportingText']],
+    ['#hero-image', ['hero', 'heroImage']], ['#hero-cta1', ['hero', 'ctaPrimary']], ['#hero-cta2', ['hero', 'ctaSecondary']]
+  ]);
+}
+
+function renderAboutSection() {
+  q('#panel-about').innerHTML = card('About Section', `
+    <div class="form-grid two">
+      ${field('Eyebrow', 'about-eyebrow', siteData.about.eyebrow)}
+      ${field('Heading', 'about-heading', siteData.about.heading)}
+      ${field('About Text', 'about-body', siteData.about.body, 'textarea')}
+      ${field('Image Path', 'about-image', siteData.about.image)}
+      ${field('What We Do Title', 'about-what-title', siteData.about.whatWeDoTitle)}
+      ${field('What We Do Text', 'about-what-body', siteData.about.whatWeDoBody, 'textarea')}
+    </div>`);
+  bindSimpleFields([
+    ['#about-eyebrow', ['about', 'eyebrow']], ['#about-heading', ['about', 'heading']], ['#about-body', ['about', 'body']],
+    ['#about-image', ['about', 'image']], ['#about-what-title', ['about', 'whatWeDoTitle']], ['#about-what-body', ['about', 'whatWeDoBody']]
+  ]);
+}
+
+function renderVisionSection() {
+  q('#panel-vision').innerHTML = card('Vision & Mission', `
+    <div class="form-grid two">
+      ${field('Vision Title', 'vision-title', siteData.visionMission.visionTitle)}
+      ${field('Vision Text', 'vision-text', siteData.visionMission.visionText, 'textarea')}
+      ${field('Mission Title', 'mission-title', siteData.visionMission.missionTitle)}
+      ${field('Mission Text', 'mission-text', siteData.visionMission.missionText, 'textarea')}
+    </div>`);
+  bindSimpleFields([
+    ['#vision-title', ['visionMission', 'visionTitle']], ['#vision-text', ['visionMission', 'visionText']],
+    ['#mission-title', ['visionMission', 'missionTitle']], ['#mission-text', ['visionMission', 'missionText']]
+  ]);
+}
+
+function arrayEditor(containerSelector, title, items, fields, options = {}) {
+  const container = q(containerSelector);
+  const fieldInputs = item => fields.map(f => f.type === 'textarea'
+    ? `${field(f.label, `${options.key}-${f.key}`, item[f.key] || '', 'textarea')}`
+    : `${field(f.label, `${options.key}-${f.key}`, item[f.key] || '')}`).join('');
+  container.innerHTML = `
+    <div class="array-editor-head">
+      <h3>${title}</h3>
+      <button class="btn primary small" id="add-${options.key}">Add Item</button>
+    </div>
+    <div class="array-editor-list">
+      ${items.map((item, index) => `
+        <div class="array-item" data-index="${index}">
+          <div class="array-item-head">
+            <strong>${esc(item[options.labelKey] || `${title} ${index + 1}`)}</strong>
+            <div class="array-actions">
+              <button class="btn small ghost" data-action="up" ${index === 0 ? 'disabled' : ''}>↑</button>
+              <button class="btn small ghost" data-action="down" ${index === items.length - 1 ? 'disabled' : ''}>↓</button>
+              <button class="btn small danger" data-action="delete">Delete</button>
+            </div>
+          </div>
+          <div class="form-grid two">
+            ${fields.map(f => {
+              const val = item[f.key] || '';
+              if (f.type === 'select') {
+                return `<label>${f.label}<select data-field="${f.key}">${f.options.map(opt => `<option value="${esc(opt)}" ${opt === val ? 'selected' : ''}>${esc(opt)}</option>`).join('')}</select></label>`;
+              }
+              if (f.type === 'textarea') return `<label>${f.label}<textarea data-field="${f.key}">${esc(val)}</textarea></label>`;
+              return `<label>${f.label}<input type="text" data-field="${f.key}" value="${esc(val)}"></label>`;
+            }).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  q(`#add-${options.key}`).addEventListener('click', () => {
+    items.push(options.newItem());
+    renderAll();
+  });
+
+  container.querySelectorAll('.array-item').forEach(itemNode => {
+    const idx = Number(itemNode.dataset.index);
+    itemNode.querySelectorAll('[data-field]').forEach(input => {
+      input.addEventListener('input', () => {
+        items[idx][input.dataset.field] = input.value;
+        if (input.dataset.field === options.labelKey) renderAll();
+      });
+    });
+    itemNode.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      if (action === 'delete') items.splice(idx, 1);
+      if (action === 'up' && idx > 0) [items[idx - 1], items[idx]] = [items[idx], items[idx - 1]];
+      if (action === 'down' && idx < items.length - 1) [items[idx + 1], items[idx]] = [items[idx], items[idx + 1]];
+      renderAll();
+    }));
+  });
+}
+
+function renderServicesSection() {
+  q('#panel-services').innerHTML = '<div id="services-editor"></div>';
+  arrayEditor('#services-editor', 'Services', siteData.services, [
+    { key: 'name', label: 'Service Name' },
+    { key: 'description', label: 'Description', type: 'textarea' },
+    { key: 'icon', label: 'Icon / Symbol' }
+  ], { key: 'services', labelKey: 'name', newItem: () => ({ name: 'New Service', description: 'Service description', icon: '✦' }) });
+}
+
+function renderProductsSection() {
+  q('#panel-products').innerHTML = '<div id="products-editor"></div>';
+  arrayEditor('#products-editor', 'Products', siteData.products, [
+    { key: 'title', label: 'Product Title' },
+    { key: 'description', label: 'Description', type: 'textarea' },
+    { key: 'image', label: 'Image Path' }
+  ], { key: 'products', labelKey: 'title', newItem: () => ({ title: 'New Product', description: 'Product description', image: './assets/images/hero-prefab-unit.png' }) });
+}
+
+function renderSpecificationsSection() {
+  q('#panel-specifications').innerHTML = '<div id="specifications-editor"></div>';
+  arrayEditor('#specifications-editor', 'Specifications', siteData.specifications, [
+    { key: 'title', label: 'Specification Title' },
+    { key: 'content', label: 'Content', type: 'textarea' }
+  ], { key: 'specs', labelKey: 'title', newItem: () => ({ title: 'New Specification', content: 'Details' }) });
+}
+
+function renderMaterialsSection() {
+  q('#panel-materials').innerHTML = '<div id="materials-editor"></div>';
+  arrayEditor('#materials-editor', 'Materials', siteData.materials, [
+    { key: 'name', label: 'Material Name' },
+    { key: 'image', label: 'Image Path' },
+    { key: 'properties', label: 'Properties', type: 'textarea' }
+  ], { key: 'materials', labelKey: 'name', newItem: () => ({ name: 'New Material', image: './assets/images/logo.png', properties: 'Material properties' }) });
+}
+
+function renderGallerySection() {
+  q('#panel-gallery').innerHTML = '<div id="gallery-editor"></div>';
+  arrayEditor('#gallery-editor', 'Gallery', siteData.gallery, [
+    { key: 'title', label: 'Image Title' },
+    { key: 'image', label: 'Image Path' },
+    { key: 'alt', label: 'Alt Text' },
+    { key: 'category', label: 'Category', type: 'select', options: ['Feature Details', 'Sample Layout', 'Materials', 'Applications'] }
+  ], { key: 'gallery', labelKey: 'title', newItem: () => ({ title: 'New Gallery Image', image: './assets/images/logo.png', alt: 'Gallery image', category: 'Feature Details' }) });
+}
+
+function renderContactSection() {
+  q('#panel-contact').innerHTML = card('Contact Information', `
+    <div class="form-grid two">
+      ${field('Eyebrow', 'contact-eyebrow', siteData.contact.eyebrow)}
+      ${field('Heading', 'contact-heading', siteData.contact.heading)}
+      ${field('Email', 'contact-email', siteData.contact.email)}
+      ${field('Phone 1', 'contact-phone1', siteData.contact.phone1)}
+      ${field('Phone 2', 'contact-phone2', siteData.contact.phone2)}
+      ${field('Office Address', 'contact-office', siteData.contact.office, 'textarea')}
+      ${field('Site Office / Warehouse', 'contact-warehouse', siteData.contact.warehouse, 'textarea')}
+      ${field('Contact Form Recipient', 'contact-formRecipient', siteData.contact.formRecipient)}
+    </div>`);
+  bindSimpleFields([
+    ['#contact-eyebrow', ['contact', 'eyebrow']], ['#contact-heading', ['contact', 'heading']], ['#contact-email', ['contact', 'email']],
+    ['#contact-phone1', ['contact', 'phone1']], ['#contact-phone2', ['contact', 'phone2']], ['#contact-office', ['contact', 'office']],
+    ['#contact-warehouse', ['contact', 'warehouse']], ['#contact-formRecipient', ['contact', 'formRecipient']]
+  ]);
+}
+
+function renderSeoSection() {
+  q('#panel-seo').innerHTML = card('SEO Settings', `
+    <div class="form-grid two">
+      ${field('Page Title', 'seo-pageTitle', siteData.seo.pageTitle)}
+      ${field('Meta Description', 'seo-metaDescription', siteData.seo.metaDescription, 'textarea')}
+      ${field('Meta Keywords', 'seo-metaKeywords', siteData.seo.metaKeywords, 'textarea')}
+      ${field('Open Graph Title', 'seo-ogTitle', siteData.seo.ogTitle)}
+      ${field('Open Graph Description', 'seo-ogDescription', siteData.seo.ogDescription, 'textarea')}
+      ${field('Open Graph Image Path', 'seo-ogImage', siteData.seo.ogImage)}
+    </div>`);
+  bindSimpleFields([
+    ['#seo-pageTitle', ['seo', 'pageTitle']], ['#seo-metaDescription', ['seo', 'metaDescription']], ['#seo-metaKeywords', ['seo', 'metaKeywords']],
+    ['#seo-ogTitle', ['seo', 'ogTitle']], ['#seo-ogDescription', ['seo', 'ogDescription']], ['#seo-ogImage', ['seo', 'ogImage']]
+  ]);
+}
+
+
+function renderThemeSection() {
+  const savedTheme = localStorage.getItem('mksTheme') || 'light';
+  q('#panel-theme').innerHTML = card('Website Theme Preference', `
+    <p class="muted">Choose the public website theme preference. This saves to <strong>mksTheme</strong> in localStorage and is used by the homepage toggle.</p>
+    <label>Theme Mode
+      <select id="theme-mode">
+        <option value="light" ${savedTheme === 'light' ? 'selected' : ''}>Light Theme</option>
+        <option value="dark" ${savedTheme === 'dark' ? 'selected' : ''}>Dark Theme</option>
+        <option value="system" ${savedTheme === 'system' ? 'selected' : ''}>System Default</option>
+      </select>
+    </label>
+  `);
+  q('#theme-mode').addEventListener('change', event => {
+    localStorage.setItem('mksTheme', event.target.value);
+    alert('Theme preference saved. Preview the website to see it applied.');
+  });
+}
+
+function renderBackupSection() {
+  q('#panel-backup').innerHTML = `
+    <div class="editor-card">
+      <h3>Backup & Restore</h3>
+      <div class="backup-actions">
+        <button class="btn primary" id="resetDefaultBtn">Reset to Default Catalog Content</button>
+        <button class="btn ghost" id="exportJsonBtn">Export JSON Backup</button>
+        <label class="btn ghost file-btn">Import JSON Backup<input type="file" id="importJsonInput" accept="application/json" hidden></label>
+        <button class="btn danger" id="clearLocalBtn">Clear Local Changes</button>
+      </div>
+      <p class="muted">Export the current editable data to a JSON file or import a previous backup.</p>
+    </div>`;
+  q('#resetDefaultBtn').addEventListener('click', () => {
+    if (!confirm('Reset all content to the default catalog data?')) return;
+    siteData = window.cloneSiteData(window.defaultSiteData);
+    window.saveSiteData(siteData);
+    renderAll();
+  });
+  q('#exportJsonBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(siteData, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'mks-site-data-backup.json';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+  q('#importJsonInput').addEventListener('change', event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        siteData = Object.assign(window.cloneSiteData(window.defaultSiteData), JSON.parse(reader.result));
+        renderAll();
+        alert('Backup imported. Click Save Changes to persist it.');
+      } catch (err) {
+        alert('Invalid JSON backup file.');
+      }
+    };
+    reader.readAsText(file);
+  });
+  q('#clearLocalBtn').addEventListener('click', () => {
+    if (!confirm('Clear locally saved changes and reload defaults?')) return;
+    localStorage.removeItem(window.storageKeys.data);
+    localStorage.removeItem(window.storageKeys.savedAt);
+    siteData = window.cloneSiteData(window.defaultSiteData);
+    renderAll();
+  });
+}
+
+function renderAll() {
+  renderDashboardOnly();
+  renderBrandSection();
+  renderHeroSection();
+  renderAboutSection();
+  renderVisionSection();
+  renderServicesSection();
+  renderProductsSection();
+  renderSpecificationsSection();
+  renderMaterialsSection();
+  renderGallerySection();
+  renderContactSection();
+  renderSeoSection();
+  renderThemeSection();
+  renderBackupSection();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isLoggedIn = sessionStorage.getItem(LOGIN_KEY) === 'true';
+  loginState(isLoggedIn);
+  if (isLoggedIn) renderAll();
+
+  q('#loginForm').addEventListener('submit', event => {
+    event.preventDefault();
+    const username = q('#loginUsername').value.trim();
+    const password = q('#loginPassword').value;
+    if (username === ADMIN_USER && password === ADMIN_PASS) {
+      sessionStorage.setItem(LOGIN_KEY, 'true');
+      q('#loginError').textContent = '';
+      loginState(true);
+      renderAll();
+      showSection('dashboard');
+    } else {
+      q('#loginError').textContent = 'Invalid username or password.';
+    }
+  });
+
+  q('#sidebarNav').addEventListener('click', event => {
+    const btn = event.target.closest('button[data-section]');
+    if (!btn) return;
+    showSection(btn.dataset.section);
+  });
+
+  q('#previewBtn').addEventListener('click', () => window.open('index.html', '_blank'));
+  q('#saveAllBtn').addEventListener('click', saveAll);
+  q('#logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem(LOGIN_KEY);
+    loginState(false);
+  });
+  showSection('dashboard');
+});
+</script>
+</body>
+</html>

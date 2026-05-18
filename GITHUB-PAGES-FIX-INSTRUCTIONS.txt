@@ -1,0 +1,23 @@
+FIXED GITHUB PAGES PACKAGE
+
+Upload the CONTENTS of this extracted folder to the root of your GitHub repo:
+https://github.com/mathieu1-tech/mathieu
+
+Required root structure after upload:
+index.html
+admin.html
+.nojekyll
+assets/css/style.css
+assets/js/main.js
+assets/js/site-data.js
+assets/images/...
+assets/catalog/PREFAB-CATALOG-MKS-CO-LTD-2026.pdf
+
+Do not upload this ZIP as one file. Extract it first, then upload/replace all files and folders.
+
+This version inlines the main CSS and JavaScript in index.html, so the design and animations still load on GitHub Pages. Image and catalog paths use ./assets/... and the assets folder must be uploaded too.
+
+After committing, open:
+https://mathieu1-tech.github.io/mathieu/
+
+Hard refresh with Ctrl + F5.
